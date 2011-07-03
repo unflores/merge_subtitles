@@ -1,0 +1,30 @@
+#! /usr/bin/ruby
+def display_help; puts "\nusage: #{$0} file1 file2 merged_file\n\n"; true end
+def add first, second ; (first.to_i + second.to_i).to_s end
+
+CODE_FORMAT = /\{(\d+)\}\{(\d+)\}/
+
+display_help and exit if ARGV.length < 3 or ARGV[0..1].select{ |name| File.exists? name }.length != 2
+
+file1, file2, merged_file  = ARGV
+last_line = `tail -n1 #{file1}`
+
+raise "#{file1} was not found" and exit if last_line.include? "No such file"
+raise "#{file1} was not correct format" and exit unless (matches = last_line.match CODE_FORMAT).length == 3
+offset =  matches[2].to_i
+
+file3_text = ""
+File.open(file2,'r') do |file|
+  file.each_line do |line|
+    match = line.match(CODE_FORMAT)
+
+    endpoints = match.offset(0)
+    time_length = "{" + add(match[1], offset) + "}{" + add(match[2], offset) + "}"
+    line = time_length + line.slice(endpoints.last, line.length)
+    file3_text << line
+  end
+end
+
+File.open(merged_file, 'w') do |file|
+  file.write file3_text
+end
