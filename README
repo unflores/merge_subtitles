@@ -8,3 +8,10 @@ cd ~/tools/lib
 git clone git@github.com:unflores/merge_subtitles.git
 cd ../
 ln -s lib/merge_subtitles/bin/merge_subtitles ./merge_subtitles
+
+
+Oh right, then go to the dir with the two subtitle files needing a good merging and put:
+
+merge_subtitles file1.sub file2.sub merged_file
+
+That is all.
